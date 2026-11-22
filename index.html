@@ -4,140 +4,99 @@
 <meta charset="UTF-8">
 <title>深城职校园镇长</title>
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
+* { margin:0; padding:0; box-sizing:border-box; }
 body {
-  font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
-  background: linear-gradient(135deg, #0d2b52 0%, #1a4a8a 50%, #0d2b52 100%);
-  min-height: 100vh; padding: 20px; color: #333;
+  font-family:"Microsoft YaHei","PingFang SC",sans-serif;
+  background:linear-gradient(135deg,#0d2b52 0%,#1a4a8a 50%,#0d2b52 100%);
+  min-height:100vh; padding:20px; color:#333;
 }
-.wrap { max-width: 1200px; margin: 0 auto; }
-header { text-align: center; color: #fff; margin-bottom: 16px; }
-header h1 { font-size: 26px; letter-spacing: 2px; }
-header h1 .logo { color: #ff7a2f; }
-header p { font-size: 13px; opacity: .8; margin-top: 6px; }
+.wrap { max-width:1240px; margin:0 auto; }
+header { text-align:center; color:#fff; margin-bottom:16px; }
+header h1 { font-size:26px; letter-spacing:2px; }
+header h1 .logo { color:#ff7a2f; }
+header p { font-size:13px; opacity:.8; margin-top:6px; }
+.card { background:#f5f6f8; border-radius:14px; padding:14px;
+  box-shadow:0 8px 30px rgba(0,0,0,.35); }
+.tip { text-align:center; font-size:13px; color:#555; margin-bottom:10px; }
+kbd { background:#0d2b52; color:#fff; border-radius:4px; padding:1px 6px;
+  font-size:12px; margin:0 2px; }
 
-.card {
-  background: #f5f6f8; border-radius: 14px; padding: 14px;
-  box-shadow: 0 8px 30px rgba(0,0,0,.35);
-}
-.tip {
-  text-align: center; font-size: 13px; color: #555; margin-bottom: 10px;
-}
-.tip b { color: #0d2b52; }
-kbd {
-  background: #0d2b52; color: #fff; border-radius: 4px;
-  padding: 1px 6px; font-size: 12px; margin: 0 2px;
-}
-
-/* 地图 */
+/* ===== 地图容器 ===== */
 #stage {
-  position: relative; width: 100%; height: 560px; overflow: hidden;
-  border-radius: 10px; background: #8bc34a;
-  background-image:
-    linear-gradient(45deg, rgba(255,255,255,.06) 25%, transparent 25%),
-    linear-gradient(-45deg, rgba(255,255,255,.06) 25%, transparent 25%);
-  background-size: 40px 40px;
+  position:relative; width:100%; height:620px; overflow:hidden;
+  border-radius:10px; background:#cfe3d8;
 }
-.road-h, .road-v { position: absolute; background: #cfd4d9; }
-.road-h { left: 0; right: 0; height: 56px; top: 250px;
-  border-top: 3px dashed #fff; border-bottom: 3px dashed #fff; }
-.road-v { top: 0; bottom: 0; width: 56px; left: 300px;
-  border-left: 3px dashed #fff; border-right: 3px dashed #fff; }
-.lake {
-  position: absolute; left: 60px; top: 60px; width: 190px; height: 130px;
-  background: radial-gradient(ellipse at center, #7fc9f5 0%, #3aa5e8 70%);
-  border-radius: 50%; box-shadow: inset 0 0 20px rgba(255,255,255,.5);
-}
-.lake::after {
-  content: "明湖"; position: absolute; inset: 0; display: flex;
-  align-items: center; justify-content: center; color: #fff;
-  font-size: 13px; text-shadow: 0 1px 3px rgba(0,0,0,.4);
-}
-.tree {
-  position: absolute; width: 26px; height: 26px; border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #4e9e3a, #2f6b22);
-  box-shadow: 0 3px 5px rgba(0,0,0,.25);
-}
+#campus { position:absolute; inset:0; }
+
+/* 建筑 */
 .building {
-  position: absolute; border-radius: 6px; cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0,0,0,.25);
-  display: flex; align-items: flex-start; justify-content: center;
-  transition: transform .15s;
+  position:absolute; border-radius:4px; cursor:pointer;
+  box-shadow:0 3px 8px rgba(0,0,0,.28);
+  display:flex; align-items:flex-start; justify-content:center;
+  transition:transform .15s, box-shadow .15s;
+  border:1.5px solid rgba(255,255,255,.7);
 }
-.building:hover { transform: scale(1.04); }
+.building:hover { transform:scale(1.05); box-shadow:0 6px 16px rgba(0,0,0,.4); z-index:20; }
 .building .bname {
-  margin-top: 6px; font-size: 13px; font-weight: bold; color: #fff;
-  text-shadow: 0 1px 3px rgba(0,0,0,.6); padding: 2px 8px;
-  background: rgba(0,0,0,.25); border-radius: 4px;
+  margin-top:3px; font-size:11px; font-weight:bold; color:#fff;
+  text-shadow:0 1px 2px rgba(0,0,0,.7); padding:1px 5px;
+  background:rgba(0,0,0,.3); border-radius:3px; white-space:nowrap;
 }
-.building .win {
-  position: absolute; left: 10px; right: 10px; bottom: 10px; top: 34px;
-  display: grid; gap: 6px;
-}
-.building .win i { background: rgba(255,255,255,.55); border-radius: 2px; }
+.building .win { position:absolute; left:6px; right:6px; bottom:6px; top:22px;
+  display:grid; gap:4px; }
+.building .win i { background:rgba(255,255,255,.5); border-radius:2px; }
 
 /* 角色 */
-#player {
-  position: absolute; width: 30px; height: 30px; border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #ff9a5a, #f2622d);
-  box-shadow: 0 4px 8px rgba(0,0,0,.35); z-index: 50;
-  transition: left .08s linear, top .08s linear;
-}
-#player::before, #player::after {
-  content: ""; position: absolute; top: 10px; width: 4px; height: 4px;
-  background: #333; border-radius: 50%;
-}
-#player::before { left: 8px; } #player::after { right: 8px; }
+#player { position:absolute; width:26px; height:26px; border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#ff9a5a,#f2622d);
+  box-shadow:0 4px 8px rgba(0,0,0,.4); z-index:50; }
+#player::before,#player::after { content:""; position:absolute; top:9px;
+  width:4px; height:4px; background:#333; border-radius:50%; }
+#player::before { left:7px; } #player::after { right:7px; }
 
-/* 建筑名牌浮层 */
-#label {
-  position: absolute; z-index: 60; background: #ff7a2f; color: #fff;
-  padding: 6px 14px; border-radius: 6px; font-size: 14px; font-weight: bold;
-  box-shadow: 0 4px 12px rgba(0,0,0,.3); display: none; white-space: nowrap;
-}
+#label { position:absolute; z-index:60; background:#ff7a2f; color:#fff;
+  padding:5px 12px; border-radius:6px; font-size:13px; font-weight:bold;
+  box-shadow:0 4px 12px rgba(0,0,0,.3); display:none; white-space:nowrap; }
 
-/* 小地图 */
-#mini {
-  position: absolute; right: 14px; top: 14px; width: 150px; height: 105px;
-  background: rgba(255,255,255,.9); border: 2px solid #0d2b52;
-  border-radius: 6px; z-index: 40; overflow: hidden;
-}
-#mini .m { position: absolute; border-radius: 2px; }
+/* 指北针 */
+#north { position:absolute; right:16px; top:16px; z-index:40;
+  width:44px; height:44px; background:rgba(255,255,255,.92);
+  border-radius:50%; display:flex; align-items:center; justify-content:center;
+  font-size:15px; font-weight:bold; color:#0d2b52;
+  box-shadow:0 3px 10px rgba(0,0,0,.25); }
+#north::before { content:"▲"; position:absolute; top:4px; font-size:11px; color:#e0392b; }
+
+/* 图例 */
+#legend { display:flex; flex-wrap:wrap; gap:10px 22px; margin-top:12px;
+  padding:12px 16px; background:#fff; border-radius:10px;
+  box-shadow:0 2px 8px rgba(0,0,0,.12); }
+#legend .lg { display:flex; align-items:center; gap:7px; font-size:12px; color:#555; }
+#legend .sw { width:26px; height:14px; border-radius:3px; border:1px solid rgba(0,0,0,.15); }
+#legend h4 { width:100%; font-size:13px; color:#0d2b52; margin-bottom:2px; }
 
 /* 状态栏 */
-.status { display: flex; gap: 12px; justify-content: center; margin: 14px 0; flex-wrap: wrap; }
-.pill {
-  background: #fff; border-radius: 20px; padding: 8px 18px; font-size: 14px;
-  box-shadow: 0 2px 8px rgba(0,0,0,.15); display: flex; align-items: center; gap: 8px;
-}
-.bar { width: 110px; height: 10px; background: #e3e6ea; border-radius: 6px; overflow: hidden; }
-.bar i { display: block; height: 100%; background: linear-gradient(90deg,#4caf50,#8bc34a); width: 70%; }
+.status { display:flex; gap:12px; justify-content:center; margin:14px 0; flex-wrap:wrap; }
+.pill { background:#fff; border-radius:20px; padding:8px 18px; font-size:14px;
+  box-shadow:0 2px 8px rgba(0,0,0,.15); display:flex; align-items:center; gap:8px; }
+.bar { width:110px; height:10px; background:#e3e6ea; border-radius:6px; overflow:hidden; }
+.bar i { display:block; height:100%; background:linear-gradient(90deg,#4caf50,#8bc34a); width:70%; }
 
-/* 事件面板 */
-.event {
-  background: #fff8ec; border-left: 5px solid #ff7a2f; border-radius: 10px;
-  padding: 16px; margin-top: 6px;
-}
-.event h3 { font-size: 16px; color: #0d2b52; margin-bottom: 6px; }
-.event .tag {
-  background: #ff7a2f; color: #fff; font-size: 12px; padding: 2px 8px;
-  border-radius: 10px; margin-left: 8px; vertical-align: middle;
-}
-.event p { font-size: 13px; color: #666; line-height: 1.8; }
-.btns { margin-top: 12px; display: flex; gap: 10px; flex-wrap: wrap; }
-.btn {
-  border: none; cursor: pointer; padding: 9px 18px; border-radius: 8px;
-  font-size: 13px; background: #0d2b52; color: #fff; transition: .15s;
-}
-.btn:hover { background: #1a4a8a; transform: translateY(-1px); }
-.btn.warn { background: #ff7a2f; }
-.btn.warn:hover { background: #ff9256; }
-.btn.ghost { background: #9aa3ad; }
-#log {
-  margin-top: 12px; background: #fff; border-radius: 10px; padding: 12px;
-  max-height: 130px; overflow-y: auto; font-size: 13px; line-height: 1.9; color: #555;
-}
-#log div::before { content: "· "; color: #ff7a2f; font-weight: bold; }
+/* 事件 */
+.event { background:#fff8ec; border-left:5px solid #ff7a2f; border-radius:10px;
+  padding:16px; margin-top:6px; }
+.event h3 { font-size:16px; color:#0d2b52; margin-bottom:6px; }
+.event .tag { background:#ff7a2f; color:#fff; font-size:12px; padding:2px 8px;
+  border-radius:10px; margin-left:8px; vertical-align:middle; }
+.event p { font-size:13px; color:#666; line-height:1.8; }
+.btns { margin-top:12px; display:flex; gap:10px; flex-wrap:wrap; }
+.btn { border:none; cursor:pointer; padding:9px 18px; border-radius:8px;
+  font-size:13px; background:#0d2b52; color:#fff; transition:.15s; }
+.btn:hover { background:#1a4a8a; transform:translateY(-1px); }
+.btn.warn { background:#ff7a2f; }
+.btn.warn:hover { background:#ff9256; }
+#log { margin-top:12px; background:#fff; border-radius:10px; padding:12px;
+  max-height:130px; overflow-y:auto; font-size:13px; line-height:1.9; color:#555; }
+#log div::before { content:"· "; color:#ff7a2f; font-weight:bold; }
 </style>
 </head>
 <body>
@@ -151,13 +110,75 @@ kbd {
     <div class="tip">
       🎮 点一下地图后用 <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> 或 <kbd>方向键</kbd> 移动角色，走到建筑前会显示名称
     </div>
+
     <div id="stage">
-      <div class="road-h"></div>
-      <div class="road-v"></div>
-      <div class="lake"></div>
-      <div id="mini"></div>
+      <!-- 校园底图：分区 + 道路 -->
+      <svg id="campus" viewBox="0 0 1200 620" preserveAspectRatio="none">
+        <!-- 校园整体轮廓 -->
+        <path d="M40,120 L200,50 L520,30 L860,55 L1080,110 L1160,240
+                 L1140,420 L1000,560 L640,595 L280,570 L90,470 L30,300 Z"
+              fill="#e8efe6" stroke="#9aa79b" stroke-width="3"/>
+
+        <!-- 环境美化区（右上大片绿地） -->
+        <path d="M860,55 L1080,110 L1160,240 L1140,400 L960,360 L900,220 Z"
+              fill="#cfe3c0" opacity=".85"/>
+        <!-- 生活区（左侧） -->
+        <path d="M40,120 L200,50 L330,90 L350,300 L300,470 L90,470 L30,300 Z"
+              fill="#f6d5cf" opacity=".8"/>
+        <!-- 教学区（中部橙） -->
+        <path d="M330,90 L520,30 L860,55 L900,220 L870,420 L640,470 L350,440 L350,300 Z"
+              fill="#f9d9a8" opacity=".85"/>
+        <!-- 文体活动区（左下绿） -->
+        <path d="M90,470 L300,470 L350,440 L640,470 L600,595 L280,570 Z"
+              fill="#cfe3c0" opacity=".9"/>
+        <!-- 行政区（中上紫） -->
+        <path d="M520,30 L700,40 L720,150 L540,160 Z" fill="#d9cdf0" opacity=".9"/>
+        <!-- 水域 -->
+        <ellipse cx="760" cy="250" rx="70" ry="52" fill="#8fc9ea" opacity=".9"/>
+        <text x="760" y="256" text-anchor="middle" font-size="14" fill="#fff"
+              style="text-shadow:0 1px 3px rgba(0,0,0,.4)">明湖</text>
+
+        <!-- 主干道 -->
+        <path d="M40,300 L1160,270" stroke="#fff" stroke-width="26" fill="none" opacity=".9"/>
+        <path d="M40,300 L1160,270" stroke="#c9ced3" stroke-width="22" fill="none"/>
+        <path d="M40,300 L1160,270" stroke="#fff" stroke-width="2"
+              stroke-dasharray="14 12" fill="none"/>
+
+        <path d="M520,30 L500,595" stroke="#c9ced3" stroke-width="20" fill="none"/>
+        <path d="M520,30 L500,595" stroke="#fff" stroke-width="2"
+              stroke-dasharray="14 12" fill="none"/>
+
+        <path d="M860,55 L870,420" stroke="#c9ced3" stroke-width="16" fill="none"/>
+        <path d="M300,470 L900,220" stroke="#d8dce0" stroke-width="12" fill="none" opacity=".8"/>
+
+        <!-- 树木 -->
+        <g fill="#5a9e46">
+          <circle cx="120" cy="180" r="13"/><circle cx="180" cy="240" r="11"/>
+          <circle cx="90" cy="380" r="12"/><circle cx="250" cy="420" r="10"/>
+          <circle cx="420" cy="520" r="12"/><circle cx="700" cy="540" r="11"/>
+          <circle cx="980" cy="300" r="13"/><circle cx="1060" cy="200" r="11"/>
+          <circle cx="1020" cy="480" r="12"/><circle cx="620" cy="120" r="10"/>
+          <circle cx="440" cy="200" r="11"/><circle cx="900" cy="140" r="10"/>
+        </g>
+      </svg>
+
+      <div id="north">N</div>
       <div id="player"></div>
       <div id="label"></div>
+    </div>
+
+    <!-- 图例 -->
+    <div id="legend">
+      <h4>🗺️ 图例</h4>
+      <div class="lg"><span class="sw" style="background:#f6d5cf"></span>生活区</div>
+      <div class="lg"><span class="sw" style="background:#cfe3c0"></span>文体活动区</div>
+      <div class="lg"><span class="sw" style="background:#f9d9a8"></span>教学区</div>
+      <div class="lg"><span class="sw" style="background:#d9cdf0"></span>行政区</div>
+      <div class="lg"><span class="sw" style="background:#8fc9ea"></span>水域</div>
+      <div class="lg"><span class="sw" style="background:#c9ced3"></span>道路</div>
+      <div class="lg"><span class="sw" style="background:#e0392b"></span>教学楼</div>
+      <div class="lg"><span class="sw" style="background:#3d6fb4"></span>实训楼</div>
+      <div class="lg"><span class="sw" style="background:#e0a33e"></span>学生公寓</div>
     </div>
 
     <div class="status">
@@ -172,86 +193,99 @@ kbd {
 </div>
 
 <script>
-/* ========== 深城职建筑数据 ========== */
+/* ===== 建筑数据：坐标按真实地图相对位置（舞台 1200x620 逻辑坐标）===== */
 const BUILDINGS = [
-  { id:'lib',  name:'图书馆',       x:420, y:40,  w:200, h:120, c:'#3d6fb4', cols:5 },
-  { id:'train',name:'实训楼',       x:660, y:40,  w:220, h:120, c:'#4a7fc1', cols:6 },
-  { id:'info', name:'信息学院大楼', x:420, y:340, w:230, h:150, c:'#2f5d9e', cols:6 },
-  { id:'dorm', name:'学生公寓',     x:700, y:340, w:200, h:150, c:'#e0a33e', cols:5 },
-  { id:'food', name:'学生食堂',     x:60,  y:340, w:170, h:110, c:'#e07b39', cols:4 },
-  { id:'gym',  name:'体育馆',       x:60,  y:230, w:150, h:70,  c:'#7a8fa6', cols:4 },
-  { id:'admin',name:'行政楼',       x:200, y:40,  w:120, h:100, c:'#556b82', cols:3 },
-  { id:'start',name:'创业学院',     x:660, y:230, w:150, h:70,  c:'#c96a4a', cols:4 },
+  // 教学区（中部橙区）
+  { name:'A1 教学楼',    x:520, y:300, w:90,  h:70,  c:'#e0392b', cols:3 },
+  { name:'A2 教学楼',    x:520, y:190, w:90,  h:70,  c:'#e0392b', cols:3 },
+  { name:'B1 教学楼',    x:640, y:180, w:80,  h:60,  c:'#e0392b', cols:3 },
+  { name:'B2 教学楼',    x:640, y:300, w:80,  h:60,  c:'#e0392b', cols:3 },
+  { name:'B3 教学楼',    x:700, y:390, w:80,  h:60,  c:'#e0392b', cols:3 },
+  { name:'信息学院大楼', x:400, y:300, w:100, h:80,  c:'#3d6fb4', cols:4 },
+  { name:'实训楼',       x:760, y:170, w:90,  h:60,  c:'#3d6fb4', cols:3 },
+  { name:'图文中心',     x:560, y:80,  w:120, h:70,  c:'#2f5d9e', cols:4 },
+  // 行政区
+  { name:'行政楼',       x:560, y:160, w:100, h:50,  c:'#7a5fb5', cols:4 },
+  { name:'图书楼',       x:400, y:180, w:90,  h:70,  c:'#2f5d9e', cols:3 },
+  // 生活区（左侧）
+  { name:'学生公寓 A',   x:80,  y:150, w:80,  h:60,  c:'#e0a33e', cols:3 },
+  { name:'学生公寓 B',   x:180, y:150, w:80,  h:60,  c:'#e0a33e', cols:3 },
+  { name:'学生公寓 C',   x:80,  y:230, w:80,  h:60,  c:'#e0a33e', cols:3 },
+  { name:'学生公寓 D',   x:180, y:230, w:80,  h:60,  c:'#e0a33e', cols:3 },
+  { name:'学生食堂',     x:120, y:330, w:110, h:60,  c:'#e07b39', cols:4 },
+  // 文体活动区（下方）
+  { name:'体育馆',       x:340, y:480, w:120, h:60,  c:'#7a8fa6', cols:5 },
+  { name:'运动场',       x:490, y:480, w:130, h:70,  c:'#4e9e3a', cols:0 },
+  { name:'创业学院',     x:820, y:390, w:100, h:55,  c:'#c96a4a', cols:4 },
+  // 环境美化区
+  { name:'天琴阁',       x:960, y:180, w:80,  h:55,  c:'#8a9a5b', cols:3 },
+  { name:'樱花园',       x:1050,y:280, w:70,  h:50,  c:'#d98ba8', cols:0 },
 ];
 
-/* 树木装饰 */
-const TREES = [[30,230],[250,180],[30,480],[260,420],[380,480],[620,200],
-               [900,220],[880,480],[400,220],[540,480],[180,60],[380,300]];
-
 const stage = document.getElementById('stage');
+const W = 1200, H = 620;
 
-/* 渲染树 */
-TREES.forEach(([x,y]) => {
-  const t = document.createElement('div');
-  t.className = 'tree'; t.style.left = x+'px'; t.style.top = y+'px';
-  stage.appendChild(t);
-});
+/* 按舞台实际尺寸缩放 */
+function scale() {
+  const r = stage.clientWidth / W;
+  document.querySelectorAll('.building').forEach((el,i) => {
+    const b = BUILDINGS[i];
+    el.style.left   = (b.x * r) + 'px';
+    el.style.top    = (b.y * (stage.clientHeight/H)) + 'px';
+    el.style.width  = (b.w * r) + 'px';
+    el.style.height = (b.h * (stage.clientHeight/H)) + 'px';
+  });
+}
 
 /* 渲染建筑 */
 BUILDINGS.forEach(b => {
   const el = document.createElement('div');
   el.className = 'building';
-  el.style.cssText = `left:${b.x}px;top:${b.y}px;width:${b.w}px;height:${b.h}px;background:${b.c};`;
-  el.innerHTML = `<div class="bname">${b.name}</div>
-    <div class="win" style="grid-template-columns:repeat(${b.cols},1fr)"></div>`;
-  const win = el.querySelector('.win');
-  for (let i = 0; i < b.cols * 3; i++) win.appendChild(document.createElement('i'));
+  el.style.background = b.c;
+  el.innerHTML = `<div class="bname">${b.name}</div>` +
+    (b.cols ? `<div class="win" style="grid-template-columns:repeat(${b.cols},1fr)"></div>` : '');
+  if (b.cols) {
+    const win = el.querySelector('.win');
+    for (let i = 0; i < b.cols * 2; i++) win.appendChild(document.createElement('i'));
+  }
   el.onclick = () => showLabel(b);
   stage.appendChild(el);
 });
+addEventListener('resize', scale);
 
-/* 小地图 */
-const mini = document.getElementById('mini');
-BUILDINGS.forEach(b => {
-  const m = document.createElement('div');
-  m.className = 'm';
-  m.style.cssText = `left:${b.x/7}px;top:${b.y/6}px;width:${b.w/7}px;height:${b.h/6}px;background:${b.c};`;
-  mini.appendChild(m);
-});
-const mLake = document.createElement('div');
-mLake.className = 'm';
-mLake.style.cssText = 'left:9px;top:10px;width:27px;height:22px;background:#3aa5e8;border-radius:50%;';
-mini.appendChild(mLake);
-const mDot = document.createElement('div');
-mDot.className = 'm';
-mDot.style.cssText = 'width:6px;height:6px;background:#f2622d;border-radius:50%;';
-mini.appendChild(mDot);
+function showLabel(b) {
+  const r = stage.clientWidth / W;
+  label.style.display = 'block';
+  label.style.left = (b.x * r) + 'px';
+  label.style.top  = (b.y * (stage.clientHeight/H) - 32) + 'px';
+  label.textContent = '📍 ' + b.name;
+  clearTimeout(showLabel.t);
+  showLabel.t = setTimeout(()=> label.style.display='none', 2500);
+}
 
-/* ========== 角色移动 ========== */
+/* ===== 角色移动（逻辑坐标，绘制时缩放）===== */
 const player = document.getElementById('player');
 const label = document.getElementById('label');
-let px = 320, py = 265, speed = 6;
+let px = 500, py = 285, speed = 7;
 
 function draw() {
-  player.style.left = px + 'px';
-  player.style.top  = py + 'px';
-  mDot.style.left = (px/7) + 'px';
-  mDot.style.top  = (py/6) + 'px';
-  checkNear();
+  const rx = stage.clientWidth / W, ry = stage.clientHeight / H;
+  player.style.left = (px * rx) + 'px';
+  player.style.top  = (py * ry) + 'px';
+  checkNear(rx, ry);
 }
-function checkNear() {
+function checkNear(rx, ry) {
   let near = null;
   BUILDINGS.forEach(b => {
-    if (px > b.x-30 && px < b.x+b.w+30 && py > b.y-30 && py < b.y+b.h+30) near = b;
+    if (px > b.x-25 && px < b.x+b.w+25 && py > b.y-25 && py < b.y+b.h+25) near = b;
   });
   if (near) {
     label.style.display = 'block';
-    label.style.left = Math.min(px, stage.clientWidth-140) + 'px';
-    label.style.top  = (py-34) + 'px';
+    label.style.left = Math.min(px*rx, stage.clientWidth-150) + 'px';
+    label.style.top  = (py*ry - 34) + 'px';
     label.textContent = '📍 ' + near.name;
-  } else label.style.display = 'none';
+  } else if (!showLabel.t) label.style.display = 'none';
 }
-stage.onclick = () => player.focus();
 
 const keys = {};
 addEventListener('keydown', e => {
@@ -265,24 +299,26 @@ setInterval(() => {
   if (keys['s'] || keys['arrowdown'])  py += speed;
   if (keys['a'] || keys['arrowleft'])  px -= speed;
   if (keys['d'] || keys['arrowright']) px += speed;
-  px = Math.max(0, Math.min(stage.clientWidth-30, px));
-  py = Math.max(0, Math.min(stage.clientHeight-30, py));
+  px = Math.max(20, Math.min(W-20, px));
+  py = Math.max(20, Math.min(H-20, py));
   draw();
 }, 30);
-draw();
 
-/* ========== 游戏逻辑 ========== */
+setTimeout(()=>{ scale(); draw(); }, 50);
+
+/* ===== 游戏逻辑 ===== */
 let round = 1, power = 100, sat = 70;
 const EVENTS = [
-  { t:'选课系统卡顿', tag:'学习助手 Agent', d:'选课开放瞬间流量暴涨，页面频繁超时。建议投入 35 点算力部署智能分流。', cost:35, gain:8 },
-  { t:'实训设备报修', tag:'智慧后勤', d:'信息学院大楼多间实训室设备故障，学生实训进度受阻。', cost:25, gain:6 },
-  { t:'迎新季人流高峰', tag:'人流调度', d:'新生报到日，学生公寓与食堂周边人流密集，需要智能引导。', cost:30, gain:7 },
-  { t:'技能大赛筹备', tag:'赛事保障', d:'省级职业院校技能大赛即将在校举办，需保障网络与场地。', cost:40, gain:10 },
-  { t:'图书馆座位紧张', tag:'空间优化', d:'期末周图书馆一座难求，学生投诉增多。', cost:20, gain:5 },
-  { t:'食堂排队过长', tag:'餐饮调度', d:'午高峰学生食堂排队超过 20 分钟。', cost:22, gain:6 },
-  { t:'宿舍网络投诉', tag:'网络运维', d:'学生公寓晚间网络带宽不足，游戏体验差。', cost:28, gain:7 },
-  { t:'创业学院路演', tag:'活动支持', d:'创业学院举办项目路演，需要直播与算力支持。', cost:18, gain:5 },
-  { t:'体育馆活动冲突', tag:'排期协调', d:'社团活动与体育课场地时间冲突。', cost:15, gain:4 },
+  { t:'选课系统卡顿',   tag:'学习助手 Agent', d:'选课开放瞬间流量暴涨，页面频繁超时。', cost:35, gain:8 },
+  { t:'实训楼设备报修', tag:'智慧后勤',       d:'信息学院大楼多间实训室设备故障，学生实训进度受阻。', cost:25, gain:6 },
+  { t:'迎新季人流高峰', tag:'人流调度',       d:'新生报到日，学生公寓与食堂周边人流密集。', cost:30, gain:7 },
+  { t:'技能大赛筹备',   tag:'赛事保障',       d:'省级职业院校技能大赛即将在校举办，需保障网络与场地。', cost:40, gain:10 },
+  { t:'图书楼座位紧张', tag:'空间优化',       d:'期末周图书楼一座难求，学生投诉增多。', cost:20, gain:5 },
+  { t:'食堂排队过长',   tag:'餐饮调度',       d:'午高峰学生食堂排队超过 20 分钟。', cost:22, gain:6 },
+  { t:'公寓网络投诉',   tag:'网络运维',       d:'学生公寓晚间网络带宽不足。', cost:28, gain:7 },
+  { t:'创业学院路演',   tag:'活动支持',       d:'创业学院举办项目路演，需要直播与算力支持。', cost:18, gain:5 },
+  { t:'体育馆排期冲突', tag:'排期协调',       d:'社团活动与体育课场地时间冲突。', cost:15, gain:4 },
+  { t:'明湖周边保洁',   tag:'环境维护',       d:'明湖沿岸落叶堆积，影响校园环境美观。', cost:12, gain:4 },
 ];
 
 const box = document.getElementById('eventBox');
@@ -301,8 +337,8 @@ function addLog(s) {
 function nextEvent() {
   if (round > 12) {
     box.innerHTML = `<h3>🎉 任期结束</h3><p>最终满意度：<b>${sat}</b> 分。${
-      sat >= 90 ? '你是深城职史上最受爱戴的镇长！' :
-      sat >= 70 ? '校园运行平稳，师生评价不错。' : '校园问题较多，下学期要加油了。'}</p>`;
+      sat>=90 ? '你是深城职史上最受爱戴的镇长！' :
+      sat>=70 ? '校园运行平稳，师生评价不错。' : '校园问题较多，下学期要加油了。'}</p>`;
     return;
   }
   const e = EVENTS[Math.floor(Math.random()*EVENTS.length)];
@@ -315,16 +351,14 @@ function nextEvent() {
       <button class="btn" onclick="skip('${e.t}')">⏭️ 暂时搁置</button>
     </div>`;
 }
-window.handle = (cost, gain, t) => {
-  if (power < cost) { addLog(`⚠️ 算力不足，无法处理「${t}」`); }
-  else {
-    power -= cost; sat = Math.min(100, sat + gain);
-    addLog(`✅ 已处理「${t}」，消耗 ${cost} 算力，满意度 +${gain}`);
-  }
+window.handle = (cost,gain,t) => {
+  if (power < cost) addLog(`⚠️ 算力不足，无法处理「${t}」`);
+  else { power -= cost; sat = Math.min(100, sat+gain);
+    addLog(`✅ 已处理「${t}」，消耗 ${cost} 算力，满意度 +${gain}`); }
   round++; power += 20; renderStatus(); nextEvent();
 };
-window.skip = (t) => {
-  sat = Math.max(0, sat - 6);
+window.skip = t => {
+  sat = Math.max(0, sat-6);
   addLog(`❌ 搁置「${t}」，满意度 -6`);
   round++; power += 20; renderStatus(); nextEvent();
 };
