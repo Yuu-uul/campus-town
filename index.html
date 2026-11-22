@@ -2,419 +2,334 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>校园小镇镇长 · 多智能体经营</title>
+<title>深城职校园镇长</title>
 <style>
-  * { box-sizing: border-box; }
-  body {
-    font-family: "Microsoft YaHei", "Segoe UI", sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    margin: 0; padding: 20px; min-height: 100vh; color: #333;
-  }
-  .wrap { max-width: 960px; margin: 0 auto; }
-  h1 { text-align: center; color: #fff; margin: 0 0 6px; font-size: 26px; }
-  .sub { text-align: center; color: rgba(255,255,255,.85); margin-bottom: 18px; font-size: 14px; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+  background: linear-gradient(135deg, #0d2b52 0%, #1a4a8a 50%, #0d2b52 100%);
+  min-height: 100vh; padding: 20px; color: #333;
+}
+.wrap { max-width: 1200px; margin: 0 auto; }
+header { text-align: center; color: #fff; margin-bottom: 16px; }
+header h1 { font-size: 26px; letter-spacing: 2px; }
+header h1 .logo { color: #ff7a2f; }
+header p { font-size: 13px; opacity: .8; margin-top: 6px; }
 
-  /* ===== 俯视角地图 ===== */
-  .map-panel {
-    background:#fff; border-radius:14px; padding:14px; margin-bottom:16px;
-    box-shadow:0 6px 20px rgba(0,0,0,.2); position:relative;
-  }
-  .map-hint { font-size:13px; color:#666; text-align:center; margin-bottom:8px; }
-  .map-hint b { color:#5c6bc0; }
-  #townMap {
-    display:block; width:100%; height:auto; border-radius:10px;
-    background:#79c46a; outline:none; cursor:pointer;
-    box-shadow:inset 0 0 0 2px rgba(0,0,0,.08);
-  }
-  #locBanner {
-    position:absolute; left:50%; transform:translateX(-50%); bottom:18px;
-    background:rgba(0,0,0,.72); color:#fff; padding:7px 16px; border-radius:20px;
-    font-size:14px; pointer-events:none; opacity:0; transition:opacity .2s;
-  }
-  #locBanner.show { opacity:1; }
-  #locBanner .k { color:#ffd54f; font-weight:bold; }
+.card {
+  background: #f5f6f8; border-radius: 14px; padding: 14px;
+  box-shadow: 0 8px 30px rgba(0,0,0,.35);
+}
+.tip {
+  text-align: center; font-size: 13px; color: #555; margin-bottom: 10px;
+}
+.tip b { color: #0d2b52; }
+kbd {
+  background: #0d2b52; color: #fff; border-radius: 4px;
+  padding: 1px 6px; font-size: 12px; margin: 0 2px;
+}
 
-  .hud { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 18px; }
-  .hud div {
-    background: rgba(255,255,255,.95); padding: 10px 18px; border-radius: 10px;
-    font-size: 15px; box-shadow: 0 2px 8px rgba(0,0,0,.15);
-  }
-  .bar { width: 120px; height: 10px; background: #ddd; border-radius: 5px; overflow: hidden; display: inline-block; vertical-align: middle; }
-  .bar > i { display: block; height: 100%; background: #4caf50; transition: width .4s; }
+/* 地图 */
+#stage {
+  position: relative; width: 100%; height: 560px; overflow: hidden;
+  border-radius: 10px; background: #8bc34a;
+  background-image:
+    linear-gradient(45deg, rgba(255,255,255,.06) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(255,255,255,.06) 25%, transparent 25%);
+  background-size: 40px 40px;
+}
+.road-h, .road-v { position: absolute; background: #cfd4d9; }
+.road-h { left: 0; right: 0; height: 56px; top: 250px;
+  border-top: 3px dashed #fff; border-bottom: 3px dashed #fff; }
+.road-v { top: 0; bottom: 0; width: 56px; left: 300px;
+  border-left: 3px dashed #fff; border-right: 3px dashed #fff; }
+.lake {
+  position: absolute; left: 60px; top: 60px; width: 190px; height: 130px;
+  background: radial-gradient(ellipse at center, #7fc9f5 0%, #3aa5e8 70%);
+  border-radius: 50%; box-shadow: inset 0 0 20px rgba(255,255,255,.5);
+}
+.lake::after {
+  content: "明湖"; position: absolute; inset: 0; display: flex;
+  align-items: center; justify-content: center; color: #fff;
+  font-size: 13px; text-shadow: 0 1px 3px rgba(0,0,0,.4);
+}
+.tree {
+  position: absolute; width: 26px; height: 26px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #4e9e3a, #2f6b22);
+  box-shadow: 0 3px 5px rgba(0,0,0,.25);
+}
+.building {
+  position: absolute; border-radius: 6px; cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,.25);
+  display: flex; align-items: flex-start; justify-content: center;
+  transition: transform .15s;
+}
+.building:hover { transform: scale(1.04); }
+.building .bname {
+  margin-top: 6px; font-size: 13px; font-weight: bold; color: #fff;
+  text-shadow: 0 1px 3px rgba(0,0,0,.6); padding: 2px 8px;
+  background: rgba(0,0,0,.25); border-radius: 4px;
+}
+.building .win {
+  position: absolute; left: 10px; right: 10px; bottom: 10px; top: 34px;
+  display: grid; gap: 6px;
+}
+.building .win i { background: rgba(255,255,255,.55); border-radius: 2px; }
 
-  .panel { background: #fff; border-radius: 14px; padding: 20px; box-shadow: 0 6px 20px rgba(0,0,0,.2); margin-bottom: 16px; }
-  .event { background: #fff8e1; border-left: 5px solid #ffa726; padding: 14px 16px; border-radius: 8px; margin-bottom: 18px; }
-  .event h3 { margin: 0 0 6px; font-size: 18px; }
-  .event p { margin: 0; color: #666; font-size: 14px; line-height: 1.6; }
-  .tag { display: inline-block; background: #ff7043; color: #fff; font-size: 12px; padding: 2px 8px; border-radius: 10px; margin-left: 8px; }
+/* 角色 */
+#player {
+  position: absolute; width: 30px; height: 30px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ff9a5a, #f2622d);
+  box-shadow: 0 4px 8px rgba(0,0,0,.35); z-index: 50;
+  transition: left .08s linear, top .08s linear;
+}
+#player::before, #player::after {
+  content: ""; position: absolute; top: 10px; width: 4px; height: 4px;
+  background: #333; border-radius: 50%;
+}
+#player::before { left: 8px; } #player::after { right: 8px; }
 
-  .agents { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
-  .card { border: 2px solid #e0e0e0; border-radius: 12px; padding: 16px; text-align: center; transition: .2s; }
-  .card.on { border-color: #4caf50; background: #f1f8e9; }
-  .card .ico { font-size: 34px; }
-  .card h4 { margin: 8px 0 4px; }
-  .card .desc { font-size: 12px; color: #888; min-height: 32px; }
-  .ctrl { margin-top: 10px; }
-  .ctrl button { width: 34px; height: 34px; border: none; border-radius: 50%; background: #667eea; color: #fff; font-size: 18px; cursor: pointer; }
-  .ctrl button:disabled { background: #ccc; cursor: not-allowed; }
-  .ctrl span { font-size: 20px; font-weight: bold; margin: 0 12px; }
+/* 建筑名牌浮层 */
+#label {
+  position: absolute; z-index: 60; background: #ff7a2f; color: #fff;
+  padding: 6px 14px; border-radius: 6px; font-size: 14px; font-weight: bold;
+  box-shadow: 0 4px 12px rgba(0,0,0,.3); display: none; white-space: nowrap;
+}
 
-  .btn { display: block; width: 100%; padding: 14px; margin-top: 18px; border: none; border-radius: 10px; background: #4caf50; color: #fff; font-size: 17px; cursor: pointer; }
-  .btn:hover { background: #43a047; }
-  .btn:disabled { background: #aaa; cursor: not-allowed; }
-  .btn.sec { background: #90a4ae; margin-top: 10px; }
+/* 小地图 */
+#mini {
+  position: absolute; right: 14px; top: 14px; width: 150px; height: 105px;
+  background: rgba(255,255,255,.9); border: 2px solid #0d2b52;
+  border-radius: 6px; z-index: 40; overflow: hidden;
+}
+#mini .m { position: absolute; border-radius: 2px; }
 
-  #log { max-height: 160px; overflow-y: auto; font-size: 13px; line-height: 1.8; }
-  #log div { border-bottom: 1px dashed #eee; padding: 3px 0; }
-  .up { color: #2e7d32; font-weight: bold; }
-  .down { color: #c62828; font-weight: bold; }
-  .over { text-align: center; padding: 30px; }
-  .over h2 { font-size: 28px; }
+/* 状态栏 */
+.status { display: flex; gap: 12px; justify-content: center; margin: 14px 0; flex-wrap: wrap; }
+.pill {
+  background: #fff; border-radius: 20px; padding: 8px 18px; font-size: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.15); display: flex; align-items: center; gap: 8px;
+}
+.bar { width: 110px; height: 10px; background: #e3e6ea; border-radius: 6px; overflow: hidden; }
+.bar i { display: block; height: 100%; background: linear-gradient(90deg,#4caf50,#8bc34a); width: 70%; }
+
+/* 事件面板 */
+.event {
+  background: #fff8ec; border-left: 5px solid #ff7a2f; border-radius: 10px;
+  padding: 16px; margin-top: 6px;
+}
+.event h3 { font-size: 16px; color: #0d2b52; margin-bottom: 6px; }
+.event .tag {
+  background: #ff7a2f; color: #fff; font-size: 12px; padding: 2px 8px;
+  border-radius: 10px; margin-left: 8px; vertical-align: middle;
+}
+.event p { font-size: 13px; color: #666; line-height: 1.8; }
+.btns { margin-top: 12px; display: flex; gap: 10px; flex-wrap: wrap; }
+.btn {
+  border: none; cursor: pointer; padding: 9px 18px; border-radius: 8px;
+  font-size: 13px; background: #0d2b52; color: #fff; transition: .15s;
+}
+.btn:hover { background: #1a4a8a; transform: translateY(-1px); }
+.btn.warn { background: #ff7a2f; }
+.btn.warn:hover { background: #ff9256; }
+.btn.ghost { background: #9aa3ad; }
+#log {
+  margin-top: 12px; background: #fff; border-radius: 10px; padding: 12px;
+  max-height: 130px; overflow-y: auto; font-size: 13px; line-height: 1.9; color: #555;
+}
+#log div::before { content: "· "; color: #ff7a2f; font-weight: bold; }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>🏫 校园小镇镇长</h1>
-  <p class="sub">先在小镇里走走熟悉校园，再回到面板分配算力处理突发事务</p>
+  <header>
+    <h1>🏫 深城职<span class="logo">校园镇长</span></h1>
+    <p>深圳城市职业学院 · 先在校园里走走熟悉环境，再回到面板分配算力处理突发事务</p>
+  </header>
 
-  <!-- ===== 俯视角小镇地图 ===== -->
-  <div class="map-panel">
-    <div class="map-hint">🎮 点一下地图后用 <b>W A S D</b> 或 <b>方向键</b> 移动角色，走到建筑前会显示名称</div>
-    <canvas id="townMap" width="920" height="540" tabindex="0"></canvas>
-    <div id="locBanner"></div>
-  </div>
+  <div class="card">
+    <div class="tip">
+      🎮 点一下地图后用 <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> 或 <kbd>方向键</kbd> 移动角色，走到建筑前会显示名称
+    </div>
+    <div id="stage">
+      <div class="road-h"></div>
+      <div class="road-v"></div>
+      <div class="lake"></div>
+      <div id="mini"></div>
+      <div id="player"></div>
+      <div id="label"></div>
+    </div>
 
-  <div class="hud">
-    <div>回合 <b id="round">1</b> / 12</div>
-    <div>算力 <b id="power">100</b></div>
-    <div>满意度 <span class="bar"><i id="satBar" style="width:70%"></i></span> <b id="sat">70</b></div>
-  </div>
+    <div class="status">
+      <div class="pill">📅 回合 <b id="round">1</b> / 12</div>
+      <div class="pill">⚡ 算力 <b id="power">100</b></div>
+      <div class="pill">😊 满意度 <div class="bar"><i id="satBar"></i></div> <b id="sat">70</b></div>
+    </div>
 
-  <div class="panel" id="gameArea">
     <div class="event" id="eventBox"></div>
-    <div class="agents" id="agents"></div>
-    <button class="btn" id="goBtn" onclick="settle()">✅ 提交分配，处理事件</button>
-    <button class="btn sec" onclick="reset()">🔄 重新开始</button>
-  </div>
-
-  <div class="panel">
-    <h4 style="margin-top:0">📋 小镇日志</h4>
     <div id="log"></div>
   </div>
 </div>
 
 <script>
-/* ================= 俯视角小镇地图 ================= */
-(function(){
-  const cv = document.getElementById('townMap');
-  const ctx = cv.getContext('2d');
-  const banner = document.getElementById('locBanner');
-  const VIEW_W = cv.width, VIEW_H = cv.height;
-  const WORLD_W = 1700, WORLD_H = 1200;
-  const TILE = 40;
+/* ========== 深城职建筑数据 ========== */
+const BUILDINGS = [
+  { id:'lib',  name:'图书馆',       x:420, y:40,  w:200, h:120, c:'#3d6fb4', cols:5 },
+  { id:'train',name:'实训楼',       x:660, y:40,  w:220, h:120, c:'#4a7fc1', cols:6 },
+  { id:'info', name:'信息学院大楼', x:420, y:340, w:230, h:150, c:'#2f5d9e', cols:6 },
+  { id:'dorm', name:'学生公寓',     x:700, y:340, w:200, h:150, c:'#e0a33e', cols:5 },
+  { id:'food', name:'学生食堂',     x:60,  y:340, w:170, h:110, c:'#e07b39', cols:4 },
+  { id:'gym',  name:'体育馆',       x:60,  y:230, w:150, h:70,  c:'#7a8fa6', cols:4 },
+  { id:'admin',name:'行政楼',       x:200, y:40,  w:120, h:100, c:'#556b82', cols:3 },
+  { id:'start',name:'创业学院',     x:660, y:230, w:150, h:70,  c:'#c96a4a', cols:4 },
+];
 
-  const BUILDINGS = [
-    { name:'教学楼',   agent:'学习助手', x:360, y:120, w:380, h:230, color:'#8d99ae', roof:'#5c677d', icon:'🏫' },
-    { name:'图书馆',   agent:'学习助手', x:920, y:120, w:320, h:230, color:'#a3b18a', roof:'#588157', icon:'📚' },
-    { name:'食堂',     agent:'生活服务', x:140, y:520, w:300, h:210, color:'#f4a261', roof:'#e76f51', icon:'🍔' },
-    { name:'学生宿舍', agent:'生活服务', x:1120,y:540, w:360, h:250, color:'#e9c46a', roof:'#c98b1b', icon:'🛏' },
-    { name:'社团中心', agent:'社交协同', x:360, y:860, w:320, h:210, color:'#b5838d', roof:'#7d4a55', icon:'🎭' },
-    { name:'行政楼',   agent:'社交协同', x:1120,y:880, w:320, h:200, color:'#6a8caf', roof:'#3d5a73', icon:'🏛' }
-  ];
-  const FIELD = { cx:880, cy:980, rx:230, ry:150, name:'操场' };
-  const POND  = { cx:760, cy:430, rx:120, ry:80 };
+/* 树木装饰 */
+const TREES = [[30,230],[250,180],[30,480],[260,420],[380,480],[620,200],
+               [900,220],[880,480],[400,220],[540,480],[180,60],[380,300]];
 
-  const TREES = [];
-  (function seedTrees(){
-    let s = 12345;
-    const rnd = ()=> (s = (s*1103515245+12345)&0x7fffffff)/0x7fffffff;
-    for(let i=0;i<80;i++){
-      const x = rnd()*WORLD_W, y = rnd()*WORLD_H;
-      if(inBuilding(x,y)||inField(x,y)||inPond(x,y)) continue;
-      TREES.push({x,y,r:12+rnd()*8});
-    }
-  })();
+const stage = document.getElementById('stage');
 
-  const player = { x:820, y:700, r:14, speed:4.4 };
-  const keys = {};
-  let facing = 'down';
+/* 渲染树 */
+TREES.forEach(([x,y]) => {
+  const t = document.createElement('div');
+  t.className = 'tree'; t.style.left = x+'px'; t.style.top = y+'px';
+  stage.appendChild(t);
+});
 
-  function inBuilding(x,y,pad){ pad=pad||0;
-    return BUILDINGS.some(b=> x> b.x-pad && x < b.x+b.w+pad && y> b.y-pad && y < b.y+b.h+pad );
-  }
-  function inField(x,y){ const dx=(x-FIELD.cx)/FIELD.rx, dy=(y-FIELD.cy)/FIELD.ry; return dx*dx+dy*dy <= 1; }
-  function inPond(x,y,pad){ pad=pad||0; const dx=(x-POND.cx)/(POND.rx+pad), dy=(y-POND.cy)/(POND.ry+pad); return dx*dx+dy*dy <= 1; }
-  function blocked(x,y){
-    if(x<player.r||y<player.r||x>WORLD_W-player.r||y>WORLD_H-player.r) return true;
-    if(inBuilding(x,y,player.r-2)) return true;
-    if(inPond(x,y,player.r-2)) return true;
-    return false;
-  }
+/* 渲染建筑 */
+BUILDINGS.forEach(b => {
+  const el = document.createElement('div');
+  el.className = 'building';
+  el.style.cssText = `left:${b.x}px;top:${b.y}px;width:${b.w}px;height:${b.h}px;background:${b.c};`;
+  el.innerHTML = `<div class="bname">${b.name}</div>
+    <div class="win" style="grid-template-columns:repeat(${b.cols},1fr)"></div>`;
+  const win = el.querySelector('.win');
+  for (let i = 0; i < b.cols * 3; i++) win.appendChild(document.createElement('i'));
+  el.onclick = () => showLabel(b);
+  stage.appendChild(el);
+});
 
-  window.addEventListener('keydown', e=>{
-    const k=e.key.toLowerCase();
-    if(['arrowup','arrowdown','arrowleft','arrowright',' '].includes(k)||['w','a','s','d'].includes(k)) e.preventDefault();
-    keys[k]=true;
+/* 小地图 */
+const mini = document.getElementById('mini');
+BUILDINGS.forEach(b => {
+  const m = document.createElement('div');
+  m.className = 'm';
+  m.style.cssText = `left:${b.x/7}px;top:${b.y/6}px;width:${b.w/7}px;height:${b.h/6}px;background:${b.c};`;
+  mini.appendChild(m);
+});
+const mLake = document.createElement('div');
+mLake.className = 'm';
+mLake.style.cssText = 'left:9px;top:10px;width:27px;height:22px;background:#3aa5e8;border-radius:50%;';
+mini.appendChild(mLake);
+const mDot = document.createElement('div');
+mDot.className = 'm';
+mDot.style.cssText = 'width:6px;height:6px;background:#f2622d;border-radius:50%;';
+mini.appendChild(mDot);
+
+/* ========== 角色移动 ========== */
+const player = document.getElementById('player');
+const label = document.getElementById('label');
+let px = 320, py = 265, speed = 6;
+
+function draw() {
+  player.style.left = px + 'px';
+  player.style.top  = py + 'px';
+  mDot.style.left = (px/7) + 'px';
+  mDot.style.top  = (py/6) + 'px';
+  checkNear();
+}
+function checkNear() {
+  let near = null;
+  BUILDINGS.forEach(b => {
+    if (px > b.x-30 && px < b.x+b.w+30 && py > b.y-30 && py < b.y+b.h+30) near = b;
   });
-  window.addEventListener('keyup', e=>{ keys[e.key.toLowerCase()]=false; });
-  cv.addEventListener('mousedown', ()=> cv.focus());
+  if (near) {
+    label.style.display = 'block';
+    label.style.left = Math.min(px, stage.clientWidth-140) + 'px';
+    label.style.top  = (py-34) + 'px';
+    label.textContent = '📍 ' + near.name;
+  } else label.style.display = 'none';
+}
+stage.onclick = () => player.focus();
 
-  function nearBuilding(){
-    const cx=player.x, cy=player.y, pad=34;
-    for(const b of BUILDINGS){
-      if(cx>b.x-pad && cx<b.x+b.w+pad && cy>b.y-pad && cy<b.y+b.h+pad) return b.name+'（'+b.agent+' Agent 负责）';
-    }
-    const d=Math.hypot(cx-FIELD.cx,cy-FIELD.cy);
-    if(d<FIELD.rx+pad) return FIELD.name;
-    return null;
-  }
+const keys = {};
+addEventListener('keydown', e => {
+  keys[e.key.toLowerCase()] = true;
+  if (['arrowup','arrowdown','arrowleft','arrowright'].includes(e.key.toLowerCase())) e.preventDefault();
+});
+addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
 
-  function update(){
-    let dx=0, dy=0;
-    if(keys['w']||keys['arrowup'])    dy-=1;
-    if(keys['s']||keys['arrowdown'])  dy+=1;
-    if(keys['a']||keys['arrowleft'])  dx-=1;
-    if(keys['d']||keys['arrowright']) dx+=1;
-    if(dx&&dy){ const n=Math.SQRT1_2; dx*=n; dy*=n; }
-    if(dx||dy){
-      if(dx>0.3) facing='right'; else if(dx<-0.3) facing='left';
-      else if(dy>0) facing='down'; else facing='up';
-      const nx=player.x+dx*player.speed, ny=player.y+dy*player.speed;
-      if(!blocked(nx,player.y)) player.x=nx;
-      if(!blocked(player.x,ny))  player.y=ny;
-    }
-    const nb=nearBuilding();
-    if(nb){ banner.innerHTML='📍 当前位置：<span class="k">'+nb+'</span>'; banner.classList.add('show'); }
-    else banner.classList.remove('show');
-  }
+setInterval(() => {
+  if (keys['w'] || keys['arrowup'])    py -= speed;
+  if (keys['s'] || keys['arrowdown'])  py += speed;
+  if (keys['a'] || keys['arrowleft'])  px -= speed;
+  if (keys['d'] || keys['arrowright']) px += speed;
+  px = Math.max(0, Math.min(stage.clientWidth-30, px));
+  py = Math.max(0, Math.min(stage.clientHeight-30, py));
+  draw();
+}, 30);
+draw();
 
-  function cam(){
-    let cx=player.x-VIEW_W/2, cy=player.y-VIEW_H/2;
-    cx=Math.max(0,Math.min(WORLD_W-VIEW_W,cx));
-    cy=Math.max(0,Math.min(WORLD_H-VIEW_H,cy));
-    return {cx,cy};
-  }
-
-  function rr(x,y,w,h,r){
-    ctx.beginPath();
-    ctx.moveTo(x+r,y);
-    ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
-    ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
-  }
-
-  function draw(){
-    const c=cam();
-    ctx.save();
-    ctx.fillStyle='#7ec96a'; ctx.fillRect(0,0,VIEW_W,VIEW_H);
-    ctx.translate(-c.cx,-c.cy);
-
-    ctx.fillStyle='rgba(255,255,255,.06)';
-    const gx0=Math.floor(c.cx/TILE)*TILE, gy0=Math.floor(c.cy/TILE)*TILE;
-    for(let x=gx0;x<c.cx+VIEW_W;x+=TILE)
-      for(let y=gy0;y<c.cy+VIEW_H;y+=TILE)
-        if(((x+y)/TILE)%2===0) ctx.fillRect(x,y,TILE,TILE);
-
-    ctx.fillStyle='#cfcfcf';
-    ctx.fillRect(0,560,WORLD_W,120);
-    ctx.fillRect(820,0,120,WORLD_H);
-    ctx.strokeStyle='#f4f4f4'; ctx.lineWidth=4; ctx.setLineDash([26,22]);
-    ctx.beginPath(); ctx.moveTo(0,620); ctx.lineTo(WORLD_W,620); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(880,0); ctx.lineTo(880,WORLD_H); ctx.stroke();
-    ctx.setLineDash([]);
-
-    ctx.fillStyle='#5aa9e6';
-    ctx.beginPath(); ctx.ellipse(POND.cx,POND.cy,POND.rx,POND.ry,0,0,7); ctx.fill();
-    ctx.fillStyle='rgba(255,255,255,.35)';
-    ctx.beginPath(); ctx.ellipse(POND.cx-30,POND.cy-20,POND.rx*0.4,POND.ry*0.3,0,0,7); ctx.fill();
-
-    ctx.fillStyle='#e07a5f';
-    ctx.beginPath(); ctx.ellipse(FIELD.cx,FIELD.cy,FIELD.rx,FIELD.ry,0,0,7); ctx.fill();
-    ctx.strokeStyle='#f1faee'; ctx.lineWidth=6;
-    ctx.beginPath(); ctx.ellipse(FIELD.cx,FIELD.cy,FIELD.rx-18,FIELD.ry-18,0,0,7); ctx.stroke();
-    ctx.fillStyle='#4a7c59';
-    ctx.beginPath(); ctx.ellipse(FIELD.cx,FIELD.cy,FIELD.rx-55,FIELD.ry-55,0,0,7); ctx.fill();
-
-    for(const b of BUILDINGS){
-      ctx.fillStyle='rgba(0,0,0,.18)'; rr(b.x+6,b.y+10,b.w,b.h,10); ctx.fill();
-      ctx.fillStyle=b.color; rr(b.x,b.y,b.w,b.h,10); ctx.fill();
-      ctx.fillStyle=b.roof; rr(b.x,b.y,b.w,46,10); ctx.fill();
-      ctx.fillStyle='#fff'; ctx.font='26px serif'; ctx.textAlign='left'; ctx.textBaseline='middle';
-      ctx.fillText(b.icon,b.x+14,b.y+24);
-      ctx.fillStyle='#fff'; ctx.font='bold 22px "Microsoft YaHei"'; ctx.textAlign='left';
-      ctx.fillText(b.name,b.x+52,b.y+24);
-      ctx.fillStyle='rgba(255,255,255,.55)';
-      const cols=Math.floor((b.w-30)/44), rows=Math.floor((b.h-90)/48);
-      for(let i=0;i<cols;i++)for(let j=0;j<rows;j++)
-        ctx.fillRect(b.x+20+i*44,b.y+62+j*48,26,30);
-    }
-
-    for(const t of TREES){
-      ctx.fillStyle='rgba(0,0,0,.15)';
-      ctx.beginPath(); ctx.ellipse(t.x+3,t.y+t.r*0.7,t.r*0.8,t.r*0.4,0,0,7); ctx.fill();
-      ctx.fillStyle='#2f6b3a'; ctx.beginPath(); ctx.arc(t.x,t.y,t.r,0,7); ctx.fill();
-      ctx.fillStyle='#3f8a4c'; ctx.beginPath(); ctx.arc(t.x-t.r*0.3,t.y-t.r*0.3,t.r*0.6,0,7); ctx.fill();
-    }
-
-    ctx.fillStyle='rgba(0,0,0,.2)';
-    ctx.beginPath(); ctx.ellipse(player.x,player.y+player.r*0.8,player.r*0.9,player.r*0.4,0,0,7); ctx.fill();
-    ctx.fillStyle='#ff8a5c'; ctx.beginPath(); ctx.arc(player.x,player.y,player.r,0,7); ctx.fill();
-    ctx.strokeStyle='#d9552c'; ctx.lineWidth=2.5; ctx.stroke();
-    ctx.fillStyle='#333';
-    let ex=0,ey=0;
-    if(facing==='down') ey=4; else if(facing==='up') ey=-4;
-    else if(facing==='right'){ex=4;} else {ex=-4;}
-    ctx.beginPath(); ctx.arc(player.x-5+ex,player.y-2+ey,2.4,0,7); ctx.fill();
-    ctx.beginPath(); ctx.arc(player.x+5+ex,player.y-2+ey,2.4,0,7); ctx.fill();
-
-    ctx.restore();
-
-    const mw=150, mh=106, mx=VIEW_W-mw-12, my=12;
-    ctx.fillStyle='rgba(255,255,255,.85)'; rr(mx-4,my-4,mw+8,mh+8,8); ctx.fill();
-    ctx.strokeStyle='#999'; ctx.lineWidth=1; ctx.stroke();
-    const sx=mw/WORLD_W, sy=mh/WORLD_H;
-    ctx.fillStyle='#7ec96a'; ctx.fillRect(mx,my,mw,mh);
-    ctx.fillStyle='#5aa9e6'; ctx.beginPath(); ctx.ellipse(mx+POND.cx*sx,my+POND.cy*sy,POND.rx*sx,POND.ry*sy,0,0,7); ctx.fill();
-    ctx.fillStyle='#e07a5f'; ctx.beginPath(); ctx.ellipse(mx+FIELD.cx*sx,my+FIELD.cy*sy,FIELD.rx*sx,FIELD.ry*sy,0,0,7); ctx.fill();
-    ctx.fillStyle='#5c677d';
-    for(const b of BUILDINGS) ctx.fillRect(mx+b.x*sx,my+b.y*sy,b.w*sx,b.h*sy);
-    ctx.fillStyle='#ff2d55'; ctx.beginPath(); ctx.arc(mx+player.x*sx,my+player.y*sy,3,0,7); ctx.fill();
-  }
-
-  function loop(){ update(); draw(); requestAnimationFrame(loop); }
-  loop();
-})();
-
-/* ================= 智能体经营玩法（原逻辑保留） ================= */
-const AGENTS = [
-  { key:'study', name:'学习助手 Agent', icon:'📚', desc:'图书馆、自习室、课程与考试相关' },
-  { key:'life',  name:'生活服务 Agent', icon:'🍔', desc:'食堂、宿舍、外卖与后勤相关' },
-  { key:'social',name:'社交协同 Agent', icon:'🤝', desc:'社团、活动、通知与舆情相关' }
-];
-
+/* ========== 游戏逻辑 ========== */
+let round = 1, power = 100, sat = 70;
 const EVENTS = [
-  { t:'图书馆爆满', d:'期末临近，图书馆座位全满，学生在门口排长队。', tag:'study', need:30 },
-  { t:'食堂排队过长', d:'中午高峰窗口不足，排队超过 20 分钟，投诉激增。', tag:'life', need:30 },
-  { t:'宿舍网络中断', d:'3 号宿舍楼断网 2 小时，学生无法上网课。', tag:'life', need:35 },
-  { t:'社团招新混乱', d:'百团大战现场人流拥挤，报名系统崩溃。', tag:'social', need:25 },
-  { t:'选课系统卡顿', d:'选课开放瞬间流量暴涨，页面频繁超时。', tag:'study', need:35 },
-  { t:'校园活动无人问津', d:'讲座宣传不到位，到场人数不足预期三成。', tag:'social', need:20 },
-  { t:'作业批改积压', d:'助教人手不足，作业批改延迟一周。', tag:'study', need:25 },
-  { t:'外卖配送超时', d:'雨天运力不足，大量订单超时未送达。', tag:'life', need:30 },
-  { t:'新生适应困难', d:'新生对校园流程不熟悉，咨询量暴增。', tag:'social', need:25 },
-  { t:'自习室占座纠纷', d:'占座现象严重，学生之间产生冲突。', tag:'study', need:20 },
-  { t:'食堂卫生投诉', d:'有学生反映餐品卫生问题，需紧急排查。', tag:'life', need:35 },
-  { t:'校园舆情发酵', d:'一条吐槽帖在校内论坛快速传播，需及时回应。', tag:'social', need:30 }
+  { t:'选课系统卡顿', tag:'学习助手 Agent', d:'选课开放瞬间流量暴涨，页面频繁超时。建议投入 35 点算力部署智能分流。', cost:35, gain:8 },
+  { t:'实训设备报修', tag:'智慧后勤', d:'信息学院大楼多间实训室设备故障，学生实训进度受阻。', cost:25, gain:6 },
+  { t:'迎新季人流高峰', tag:'人流调度', d:'新生报到日，学生公寓与食堂周边人流密集，需要智能引导。', cost:30, gain:7 },
+  { t:'技能大赛筹备', tag:'赛事保障', d:'省级职业院校技能大赛即将在校举办，需保障网络与场地。', cost:40, gain:10 },
+  { t:'图书馆座位紧张', tag:'空间优化', d:'期末周图书馆一座难求，学生投诉增多。', cost:20, gain:5 },
+  { t:'食堂排队过长', tag:'餐饮调度', d:'午高峰学生食堂排队超过 20 分钟。', cost:22, gain:6 },
+  { t:'宿舍网络投诉', tag:'网络运维', d:'学生公寓晚间网络带宽不足，游戏体验差。', cost:28, gain:7 },
+  { t:'创业学院路演', tag:'活动支持', d:'创业学院举办项目路演，需要直播与算力支持。', cost:18, gain:5 },
+  { t:'体育馆活动冲突', tag:'排期协调', d:'社团活动与体育课场地时间冲突。', cost:15, gain:4 },
 ];
 
-let S = {};
+const box = document.getElementById('eventBox');
+const log = document.getElementById('log');
 
-function reset(){
-  S = { round:1, power:100, sat:70, alloc:{study:0,life:0,social:0}, event:null, over:false };
-  pickEvent();
-  render();
-  document.getElementById('log').innerHTML = '';
-  log('🎬 你上任成为小镇镇长，开始管理校园智能体。');
+function renderStatus() {
+  document.getElementById('round').textContent = round;
+  document.getElementById('power').textContent = power;
+  document.getElementById('sat').textContent = sat;
+  document.getElementById('satBar').style.width = sat + '%';
 }
-
-function pickEvent(){
-  S.event = EVENTS[Math.floor(Math.random()*EVENTS.length)];
-  S.alloc = {study:0,life:0,social:0};
-  S.power = 100;
+function addLog(s) {
+  const d = document.createElement('div');
+  d.textContent = s; log.prepend(d);
 }
-
-function change(key, delta){
-  const v = S.alloc[key] + delta;
-  const total = S.alloc.study + S.alloc.life + S.alloc.social;
-  if (v < 0) return;
-  if (delta > 0 && total >= S.power) return;
-  S.alloc[key] = v;
-  render();
-}
-
-function settle(){
-  if (S.over) return;
-  const used = S.alloc.study + S.alloc.life + S.alloc.social;
-  if (used === 0){ alert('请至少分配 1 点算力'); return; }
-
-  const main = S.event.tag;
-  const mainPower = S.alloc[main];
-  const other = used - mainPower;
-  let delta = 0, msg = '';
-
-  if (mainPower >= S.event.need){
-    delta = 10 + Math.floor((mainPower - S.event.need)/5);
-    msg = `✅ ${S.event.t} 处理顺利，${name(main)} 高效完成任务`;
-  } else if (mainPower > 0){
-    delta = -5 + other;
-    msg = `⚠️ ${S.event.t} 算力不足，勉强应付，仍有遗留问题`;
-  } else {
-    delta = -15 + Math.floor(other/3);
-    msg = `❌ ${S.event.t} 无人处理，问题恶化`;
-  }
-
-  const idle = S.power - used;
-  if (idle > 60) delta -= 3;
-
-  S.sat = Math.max(0, Math.min(100, S.sat + delta));
-  log(`${msg} <span class="${delta>=0?'up':'down'}">满意度 ${delta>=0?'+':''}${delta}</span>`);
-
-  if (S.sat <= 0){
-    S.over = true; render();
-    document.getElementById('gameArea').innerHTML =
-      `<div class="over"><h2>😞 小镇满意度归零</h2><p>你被师生们投下了不信任票，任期结束于第 ${S.round} 回合。</p>
-       <button class="btn" onclick="reset()">🔄 再来一次</button></div>`;
+function nextEvent() {
+  if (round > 12) {
+    box.innerHTML = `<h3>🎉 任期结束</h3><p>最终满意度：<b>${sat}</b> 分。${
+      sat >= 90 ? '你是深城职史上最受爱戴的镇长！' :
+      sat >= 70 ? '校园运行平稳，师生评价不错。' : '校园问题较多，下学期要加油了。'}</p>`;
     return;
   }
-
-  if (S.round >= 12){
-    S.over = true; render();
-    const grade = S.sat >= 90 ? 'S 级 · 传奇镇长' : S.sat >= 75 ? 'A 级 · 优秀镇长' : S.sat >= 60 ? 'B 级 · 合格镇长' : 'C 级 · 勉强留任';
-    document.getElementById('gameArea').innerHTML =
-      `<div class="over"><h2>🎉 任期圆满结束！</h2><p>最终满意度：<b>${S.sat}</b> 分</p><p>评价：<b>${grade}</b></p>
-       <button class="btn" onclick="reset()">🔄 再玩一次</button></div>`;
-    return;
+  const e = EVENTS[Math.floor(Math.random()*EVENTS.length)];
+  box.innerHTML = `
+    <h3>📌 ${e.t}<span class="tag">建议：${e.tag}</span></h3>
+    <p>${e.d}</p>
+    <p style="margin-top:6px">处理该事件建议投入 <b style="color:#ff7a2f">${e.cost}</b> 点算力，预计满意度 +${e.gain}</p>
+    <div class="btns">
+      <button class="btn warn" onclick="handle(${e.cost},${e.gain},'${e.t}')">✅ 投入算力处理</button>
+      <button class="btn" onclick="skip('${e.t}')">⏭️ 暂时搁置</button>
+    </div>`;
+}
+window.handle = (cost, gain, t) => {
+  if (power < cost) { addLog(`⚠️ 算力不足，无法处理「${t}」`); }
+  else {
+    power -= cost; sat = Math.min(100, sat + gain);
+    addLog(`✅ 已处理「${t}」，消耗 ${cost} 算力，满意度 +${gain}`);
   }
+  round++; power += 20; renderStatus(); nextEvent();
+};
+window.skip = (t) => {
+  sat = Math.max(0, sat - 6);
+  addLog(`❌ 搁置「${t}」，满意度 -6`);
+  round++; power += 20; renderStatus(); nextEvent();
+};
 
-  S.round++;
-  pickEvent();
-  render();
-}
-
-function name(k){ return AGENTS.find(a=>a.key===k).name; }
-
-function log(html){
-  const box = document.getElementById('log');
-  box.innerHTML = `<div>${html}</div>` + box.innerHTML;
-}
-
-function render(){
-  document.getElementById('round').textContent = S.round;
-  document.getElementById('power').textContent = S.power - (S.alloc.study+S.alloc.life+S.alloc.social);
-  document.getElementById('sat').textContent = S.sat;
-  document.getElementById('satBar').style.width = S.sat + '%';
-  document.getElementById('satBar').style.background = S.sat > 60 ? '#4caf50' : S.sat > 30 ? '#ff9800' : '#f44336';
-
-  document.getElementById('eventBox').innerHTML =
-    `<h3>📢 ${S.event.t}<span class="tag">建议：${name(S.event.tag)}</span></h3>
-     <p>${S.event.d}</p><p style="margin-top:6px">处理该事件建议投入 <b>${S.event.need}</b> 点算力</p>`;
-
-  const total = S.alloc.study + S.alloc.life + S.alloc.social;
-  document.getElementById('agents').innerHTML = AGENTS.map(a => `
-    <div class="card ${S.alloc[a.key]>0?'on':''}">
-      <div class="ico">${a.icon}</div>
-      <h4>${a.name}</h4>
-      <div class="desc">${a.desc}</div>
-      <div class="ctrl">
-        <button onclick="change('${a.key}',-10)" ${S.alloc[a.key]<10?'disabled':''}>-</button>
-        <span>${S.alloc[a.key]}</span>
-        <button onclick="change('${a.key}',10)" ${total>=S.power?'disabled':''}>+</button>
-      </div>
-      <div style="font-size:12px;color:#999;margin-top:6px">点击 ±10 点算力</div>
-    </div>`).join('');
-}
-
-reset();
+renderStatus(); nextEvent();
 </script>
 </body>
 </html>
